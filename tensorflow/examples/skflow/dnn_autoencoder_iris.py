@@ -15,20 +15,21 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from sklearn import datasets, metrics, cross_validation
+import random
+
+import tensorflow as tf
 from tensorflow.contrib import learn
+from tensorflow.contrib.learn import datasets
 
+# Load Iris Data
 iris = datasets.load_iris()
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(iris.data, iris.target,
-    test_size=0.2, random_state=42)
 
-def my_model(X, y):
-    """This is DNN with 10, 20, 10 hidden layers, and dropout of 0.1 probability."""
-    layers = learn.ops.dnn(X, [10, 20, 10], dropout=0.1)
-    return learn.models.logistic_regression(layers, y)
+# Initialize a deep neural network autoencoder
+# You can also add noise and add dropout if needed
+# Details see TensorFlowDNNAutoencoder documentation.
+autoencoder = learn.TensorFlowDNNAutoencoder(hidden_units=[10, 20])
 
-classifier = learn.TensorFlowEstimator(model_fn=my_model, n_classes=3,
-    steps=1000)
-classifier.fit(X_train, y_train)
-score = metrics.accuracy_score(y_test, classifier.predict(X_test))
-print('Accuracy: {0:f}'.format(score))
+# Fit with Iris data
+transformed = autoencoder.fit_transform(iris.data)
+
+print(transformed)
