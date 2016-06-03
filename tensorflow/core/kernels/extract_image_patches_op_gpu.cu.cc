@@ -1,4 +1,4 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2015 Google Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,12 +15,24 @@ limitations under the License.
 
 #if GOOGLE_CUDA
 
-#include "tensorflow/core/kernels/cwise_ops_gpu_common.cu.h"
+#define EIGEN_USE_GPU
+
+#include "tensorflow/core/framework/register_types.h"
+#include "tensorflow/core/kernels/extract_image_patches_op.h"
 
 namespace tensorflow {
+
+typedef Eigen::GpuDevice GPUDevice;
+
 namespace functor {
-DEFINE_BINARY4(squared_difference, float, Eigen::half, double, int64);
-}  // namespace functor
-}  // namespace tensorflow
+
+#define REGISTER(T) template struct ExtractImagePatchesForward<GPUDevice, T>;
+
+TF_CALL_GPU_NUMBER_TYPES(REGISTER);
+
+#undef REGISTER
+
+}  // end namespace functor
+}  // end namespace tensorflow
 
 #endif  // GOOGLE_CUDA
