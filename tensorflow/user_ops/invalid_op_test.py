@@ -12,34 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-
-"""Tests for the SWIG-wrapped quantize training rewriting."""
+"""Tests for custom user ops."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os.path
+
 import tensorflow as tf
 
 
-class PywrapQuantizeTrainingTest(tf.test.TestCase):
+class InvalidOpTest(tf.test.TestCase):
 
-  # Mainly to verify the python interface is working.
-  # More tests for this function can be found in the related c++ tests.
-  def testQuantizeTraining(self):
-    with tf.Session() as sess:
-      a = tf.constant(6.0, shape=[1, 1])
-      b = tf.constant(7.0, shape=[1, 1])
-      c = tf.matmul(a, b, name='matmul')
+  def testBasic(self):
+    library_filename = os.path.join(tf.resource_loader.get_data_files_path(),
+                                    'invalid_op.so')
+    with self.assertRaises(tf.errors.InvalidArgumentError):
+      tf.load_op_library(library_filename)
 
-      self.assertEquals(len(sess.graph_def.node), 3)
-
-      result = tf.train.do_quantize_training_on_graphdef(
-          sess.graph_def, 8)
-
-      # 2 convert ops are added so it should have 5 nodes now.
-      self.assertEquals(len(result.node), 5)
-
-      self.assertEquals(c.eval(), 42)
 
 if __name__ == '__main__':
   tf.test.main()
