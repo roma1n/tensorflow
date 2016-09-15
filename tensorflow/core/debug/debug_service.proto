@@ -13,27 +13,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef THIRD_PARTY_TENSORFLOW_CORE_KERNELS_SLICE_OP_CPU_IMPL_H_
-#define THIRD_PARTY_TENSORFLOW_CORE_KERNELS_SLICE_OP_CPU_IMPL_H_
+syntax = "proto3";
 
-#define EIGEN_USE_THREADS
+package tensorflow;
 
-#include "tensorflow/core/framework/bfloat16.h"
-#include "tensorflow/core/framework/register_types.h"
-#include "tensorflow/core/kernels/slice_op.h"
+import "tensorflow/core/util/event.proto";
 
-namespace tensorflow {
+// Reply message from EventListener to the client, i.e., to the source of the
+// Event protocal buffers, e.g., debug ops inserted by a debugged runtime to a
+// TensorFlow graph being executed.
+message EventReply {
+}
 
-using CpuDevice = Eigen::ThreadPoolDevice;
-
-#define DEFINE_CPU_KERNELS(T) \
-  template struct functor::Slice<CpuDevice, T, CPU_PROVIDED_IXDIM>;
-
-TF_CALL_ALL_TYPES(DEFINE_CPU_KERNELS);
-DEFINE_CPU_KERNELS(bfloat16);
-
-#undef DEFINE_CPU_KERNELS
-
-}  // namespace tensorflow
-
-#endif  // THIRD_PARTY_TENSORFLOW_CORE_KERNELS_SLICE_OP_CPU_IMPL_H_
+// EventListener: Receives Event protos, e.g., from debugged TensorFlow
+// runtime(s).
+service EventListener {
+  // Client(s) can use this RPC method to send the EventListener Event protos.
+  // The Event protos can hold information such as intermediate tensors from
+  // a debugged graph being executed.
+  rpc SendEvents(stream Event) returns (stream EventReply);
+}
