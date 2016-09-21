@@ -13,21 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef THIRD_PARTY_TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_RPC_GRPC_MASTER_SERVICE_H_
-#define THIRD_PARTY_TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_RPC_GRPC_MASTER_SERVICE_H_
-
-namespace grpc {
-class ServerBuilder;
-}  // namespace grpc
+#include "tensorflow/core/platform/default/protobuf.h"
 
 namespace tensorflow {
 
-class AsyncServiceInterface;
-struct MasterEnv;
-
-AsyncServiceInterface* NewGrpcMasterService(MasterEnv* env,
-                                            ::grpc::ServerBuilder* builder);
+const char* kProtobufInt64Typename = "::google::protobuf::int64";
+const char* kProtobufUint64Typename = "::google::protobuf::uint64";
 
 }  // namespace tensorflow
-
-#endif  // THIRD_PARTY_TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_RPC_GRPC_MASTER_SERVICE_H_
