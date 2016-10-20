@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Copyright 2015 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,40 +13,21 @@
 # limitations under the License.
 # ==============================================================================
 
-set -e
+"""Start a simple interactive console with TensorFlow available."""
 
-# Install dependencies from ubuntu deb repository.
-apt-get update
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
-apt-get install -y --no-install-recommends \
-    autoconf \
-    automake \
-    build-essential \
-    cmake \
-    curl \
-    ffmpeg \
-    git \
-    libcurl4-openssl-dev \
-    libtool \
-    openjdk-8-jdk \
-    openjdk-8-jre-headless \
-    pkg-config \
-    python-dev \
-    python-pip \
-    python-virtualenv \
-    python3-dev \
-    python3-pip \
-    rsync \
-    sudo \
-    swig \
-    unzip \
-    wget \
-    zip \
-    zlib1g-dev
+import code
+import sys
 
-# Install ca-certificates, and update the certificate store.
-apt-get install ca-certificates-java
-update-ca-certificates -f
 
-apt-get clean
-rm -rf /var/lib/apt/lists/*
+def main(_):
+  """Run an interactive console."""
+  code.interact()
+  return 0
+
+
+if __name__ == '__main__':
+  sys.exit(main(sys.argv))
