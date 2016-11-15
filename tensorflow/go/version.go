@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package tensorflow is a Go binding to TensorFlow.
-//
-// The API is subject to change and may break at any time.
-//
-// TensorFlow (www.tensorflow.org) is an open source software library for
-// numerical computation using data flow graphs. This package provides
-// functionality to build and execute such graphs and depends on
-// TensorFlow being available. For installation instructions see
-// https://www.tensorflow.org/code/tensorflow/go/README.md
 package tensorflow
+
+// #include <string.h>
+// #include "tensorflow/c/c_api.h"
+import "C"
+
+// Version returns a string describing the version of the underlying TensorFlow
+// runtime.
+func Version() string { return C.GoString(C.TF_Version()) }
