@@ -1,17 +1,23 @@
-# Description:
-# Example TensorFlow models for ImageNet.
+# Example Estimator model
+
+package(
+    default_visibility = ["//visibility:public"],
+)
 
 licenses(["notice"])  # Apache 2.0
 
 exports_files(["LICENSE"])
 
 py_binary(
-    name = "classify_image",
+    name = "iris_monitors",
     srcs = [
-        "classify_image.py",
+        "iris_monitors.py",
+    ],
+    data = [
+        "iris_test.csv",
+        "iris_training.csv",
     ],
     srcs_version = "PY2AND3",
-    visibility = ["//tensorflow:__subpackages__"],
     deps = [
         "//tensorflow:tensorflow_py",
     ],

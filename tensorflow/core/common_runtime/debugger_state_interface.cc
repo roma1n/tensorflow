@@ -13,17 +13,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package org.tensorflow.examples;
+#include "tensorflow/core/common_runtime/debugger_state_interface.h"
 
-import org.tensorflow.TensorFlow;
+namespace tensorflow {
 
-/**
- * Sample usage of the TensorFlow Java library.
- *
- * <p>This sample should become more useful as functionality is added to the API.
- */
-public class Example {
-  public static void main(String[] args) {
-    System.out.println("TensorFlow version: " + TensorFlow.version());
-  }
+DebuggerStateFactory* DebuggerStateRegistry::factory_ = nullptr;
+
+// static
+void DebuggerStateRegistry::RegisterFactory(
+    const DebuggerStateFactory& factory) {
+  delete factory_;
+  factory_ = new DebuggerStateFactory(factory);
 }
+
+// static
+std::unique_ptr<DebuggerStateInterface> DebuggerStateRegistry::CreateState(
+    const DebugOptions& debug_options) {
+  return (factory_ == nullptr || *factory_ == nullptr)
+             ? nullptr
+             : (*factory_)(debug_options);
+}
+
+}  // end namespace tensorflow
