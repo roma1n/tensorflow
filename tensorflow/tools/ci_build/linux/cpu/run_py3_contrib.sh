@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+# Copyright 2017 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,30 +12,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 # ==============================================================================
 
-set -eux
+set -e
+set -x
 
-if [ -d $TEST_SRCDIR/org_tensorflow ]; then
-  TFDIR=$TEST_SRCDIR/org_tensorflow/tensorflow
-else
-  # Support 0.2.1- runfiles.
-  TFDIR=$TEST_SRCDIR/tensorflow
-fi
-DOXYGEN=doxygen
-DOXYGEN_CONFIG="tf-doxy_for_md-config"
-TMP_DIR=/tmp/tensorflow-docs
-mkdir -p $TMP_DIR/python
-mkdir -p $TMP_DIR/xml
-mkdir -p $TMP_DIR/cc
+N_JOBS=$(grep -c ^processor /proc/cpuinfo)
 
-pushd $TFDIR
-python/gen_docs_combined --out_dir=$TMP_DIR/python
+echo ""
+echo "Bazel will use ${N_JOBS} concurrent job(s)."
+echo ""
 
-# TODO(wicke): this does not work well inside the build/test jail
-#$DOXYGEN "tools/docs/$DOXYGEN_CONFIG"
-#tools/docs/gen_cc_md \
-#    --out_dir=$TMP_DIR/cc \
-#    --src_dir=$TMP_DIR/xml
-popd
-echo "PASS"
+# Run configure.
+export TF_NEED_GCP=0
+export TF_NEED_HDFS=0
+export TF_NEED_CUDA=0
+export PYTHON_BIN_PATH=`which python3`
+yes "" | ./configure
+
+# Run bazel test command. Double test timeouts to avoid flakes.
+bazel test --test_tag_filters=-gpu,-benchmark-test --test_lang_filters=py -k \
+    --jobs=${N_JOBS} --test_timeout 300,450,1200,3600 --build_tests_only \
+    --test_output=errors -- \
+    //tensorflow/contrib/...
