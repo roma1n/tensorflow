@@ -1,7 +1,7 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
+/* Copyright 2016 Google Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
-vcyou may not use this file except in compliance with the License.
+you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
@@ -13,11 +13,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#include "i_graph_transfer_ops_definitions.h"
+#include "tensorflow/core/kernels/fuzzing/fuzz_session.h"
+#include "tensorflow/cc/ops/standard_ops.h"
 
 namespace tensorflow {
-/* static */ constexpr int IGraphTransferOpsDefinitions::INVALID_OP_ID;
-// TODO(satok): Remove
-/* static */ constexpr const char* const
-    IGraphTransferOpsDefinitions::FLATTEN_OP_NAME;
-}
+namespace fuzzing {
+
+class FuzzEncodeBase64 : public FuzzSession {
+  SINGLE_INPUT_OP_BUILDER(DT_STRING, EncodeBase64);
+};
+
+STANDARD_TF_FUZZ_FUNCTION(FuzzEncodeBase64);
+
+}  // end namespace fuzzing
+}  // end namespace tensorflow
